@@ -1,1 +1,1 @@
-object Global extends com.typesafe.play.mini.SetupJavaApplicationFor[com.example.App]
+object Global extends com.typesafe.play.mini.SetupJavaApplicationFor[org.mhoffman.life.App]
