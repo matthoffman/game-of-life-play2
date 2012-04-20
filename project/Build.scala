@@ -15,6 +15,8 @@ object MinimalBuild extends Build {
     resolvers += typesafe,
     resolvers += typesafeSnapshot,
     libraryDependencies += "com.typesafe" %% "play-mini" % buildVersion,
+    libraryDependencies += "com.google.guava" % "guava" % "11.0.1",
+
     mainClass in (Compile, run) := Some("play.core.server.NettyServer")
   ).settings(assemblySettings: _*)
 }
