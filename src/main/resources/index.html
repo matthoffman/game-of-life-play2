@@ -157,18 +157,25 @@
         // changed my mind. More efficient, and simpler with JQuery, to send the request as url-form-encoded, not json.
         // so, to do this, we'll send the # of rows, then a big long string of all the values.
         // That's fairly easy to decode on the other side.
-        var boardArray = $('#gameboard').find("tr").map(function (index, value) {
-            return $(value).children().map(function (index, value) {
+        var boardArray = $('#gameboard').find(".tableCell").map(function (index, value) {
                 if ($(value).hasClass("alive")) {
                     return 1;
                 } else {
                     return 0;
                 }
-            })
-        });
-        var dataToSend = {'currentGeneration':boardArray.toArray()};
+            }).toArray().join("");
+        var rows = $('#gameboard').find("tr").size()
 
-        $('#debug').html("sending " + dataToSend);
+        $('#debug').html("sending " + boardArray);
+        $.ajax(  {
+                    type: "POST",
+                    url:  "/next",
+                    data: { "rows": rows, "cells": boardArray},
+                    success: function (response) {
+                       $('#debug').html('got back: '+ response.nextGeneration);
+                    },
+                    dataType: "json"
+        });
 //        $.ajax( {
 //            type: "POST",
 //            url:  "/next",

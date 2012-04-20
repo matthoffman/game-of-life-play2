@@ -13,6 +13,7 @@ import play.mvc.*;
 import com.typesafe.play.mini.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * this app is configured through Global.scala
@@ -78,12 +79,18 @@ public class App extends Controller {
         Logger.info("Got request: "+ request().body().asText());
         Logger.info("request: "+ request().toString());
 
-        JsonNode json = request().body().asJson();
-        if (json == null) {
-            return badRequest("Expecting Json data");
+        Map map = request().body().asFormUrlEncoded();
+        if (map == null) {
+            return badRequest("Expecting form-url-encoded input data");
         } else {
-            Logger.info("As JSON: " + json);
+            Logger.info("As Map: " + map);
         }
+        if (!map.containsKey("rows") || map.get("rows") == null) return badRequest("Expecting a 'rows' parameter to indicate the # of rows in the input data");
+        if (!map.containsKey("cells") || map.get("cells") == null) return badRequest("Expecting a 'cells' parameter containing the current cells");
+        String rowString = getParameter(map, "rows");
+        int rows = Integer.parseInt(rowString.toString());
+        String cells = getParameter(map, "cells");
+        Logger.info("got cells "+ cells+" spread among "+ rows+" rows");
         ObjectNode result = Json.newObject();
         ArrayNode resultArray = result.arrayNode();
         for (int i = 0; i < 3; i++) {
@@ -94,7 +101,16 @@ public class App extends Controller {
             resultArray.add(row);
         }
         result.put("nextGeneration", resultArray);
+        result.put("rows", 3);
         return ok(result);
+    }
+
+    private static String getParameter(Map map, String key) {
+        Object o = map.get(key);
+        if (o.getClass().isArray())  {
+            o = ((String[])o)[0];
+        }
+        return o.toString();
     }
 
     @URL("/")
