@@ -58,7 +58,7 @@
 
     <h1>Playing with Life</h1>
 
-    <p>This is a simple (really, really simple) instance of <a
+    <p>This is a simple (really, really simple) implementation of <a
             href="http://en.wikipedia.org/wiki/Conway's_Game_of_Life">Conway's Game of Life</a> using the <a
             href="https://github.com/typesafehub/play2-mini">Play2 "mini" framework</a>.</p>
 
@@ -118,6 +118,8 @@
 <script src="/assets/js/bootstrap-typeahead.js"></script>
 
 <script type="text/javascript">
+    jQuery.ajaxSetting.traditional = true;
+
     // taken from http://blogs.microsoft.co.il/blogs/linqed/archive/2009/03/04/generating-html-tables-with-jquery.aspx
     function createDynamicTable(tbody, rows, cols) {
         if (tbody == null || tbody.length < 1) return;
@@ -137,8 +139,58 @@
 
     function sendCurrentState(gameboard) {
         if (gameboard == null || gameboard.length < 1) return; // garbage in, garbage out.
+        // create a 2d array where cells marked "alive" = 1 and other cells = 0.
+        // we'll do this with two nested map calls, because it seems simplest.
+//        var boardArray = $('#gameboard').find("tr").map(
+//                function (index, value) {
+//                    return $(value).children().map(
+//                            function (index, value) {
+//                                if ($(value).hasClass("alive")) {
+//                                    return 1;
+//                                } else {
+//                                    return 0;
+//                                }
+//                            }
+//                    )
+//                }
+//        );
+        // changed my mind. More efficient, and simpler with JQuery, to send the request as url-form-encoded, not json.
+        // so, to do this, we'll send the # of rows, then a big long string of all the values.
+        // That's fairly easy to decode on the other side.
+        var boardArray = $('#gameboard').find("tr").map(function (index, value) {
+            return $(value).children().map(function (index, value) {
+                if ($(value).hasClass("alive")) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            })
+        });
+        var dataToSend = {'currentGeneration':boardArray.toArray()};
 
-
+        $('#debug').html("sending " + dataToSend);
+//        $.ajax( {
+//            type: "POST",
+//            url:  "/next",
+//            data: dataToSend,
+//            success: function (response) {
+//                $('#debug').html(response); // hey, it's a start, right?
+//            },
+//            dataType: "json",
+//            traditional: true
+//        });
+//        // if we want to post JSON data, we do it like this:
+//        $.ajax( {
+//            type: "POST",
+//            url:  "/next",
+//            data: '{ "some": "data" }',
+//            success: function (response) {
+//                $('#debug').html(response); // hey, it's a start, right?
+//            },
+//            dataType: "json",
+//            contentType: "application/json",
+//            processData: false
+//        });
     }
 </script>
 
