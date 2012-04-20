@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
     <meta charset="utf-8">
     <title>Conway's Game of Life</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-
+    <!-- This HTML layout shamelessly lifted (according to license, of course) from http://twitter.github.com/bootstrap/examples.html -->
     <!-- Le styles -->
     <link href="/assets/css/bootstrap.css" rel="stylesheet">
+    <!-- this is our custom CSS -->
+    <link href="/assets/css/main.css" rel="stylesheet">
     <style>
-      body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
+        body {
+            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+        }
     </style>
     <link href="/assets/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
     <!-- Le fav and touch icons -->
@@ -26,54 +28,119 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png">
-  </head>
+</head>
 
-  <body>
+<body>
 
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
         <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="#">Life, Simplified</a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li class="active"><a href="#">Game of Life</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="#">Life, Simplified</a>
+
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li class="active"><a href="#">Game of Life</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
         </div>
-      </div>
     </div>
+</div>
 
-    <div class="container">
+<div class="container">
 
-      <h1>Playing with Life</h1>
-      <p>This is a simple (really, really simple) instance of <a href="http://en.wikipedia.org/wiki/Conway's_Game_of_Life">Conway's Game of Life</a> using the <a href="https://github.com/typesafehub/play2-mini">Play2 "mini" framework</a>.</p>
-      <p>The HTML template is based on <a href="https://github.com/twitter/bootstrap">Twitter's Bootstrap</a>.</p>
+    <h1>Playing with Life</h1>
 
-    </div> <!-- /container -->
+    <p>This is a simple (really, really simple) instance of <a
+            href="http://en.wikipedia.org/wiki/Conway's_Game_of_Life">Conway's Game of Life</a> using the <a
+            href="https://github.com/typesafehub/play2-mini">Play2 "mini" framework</a>.</p>
 
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="/assets/js/bootstrap-transition.js"></script>
-    <script src="/assets/js/bootstrap-alert.js"></script>
-    <script src="/assets/js/bootstrap-modal.js"></script>
-    <script src="/assets/js/bootstrap-dropdown.js"></script>
-    <script src="/assets/js/bootstrap-scrollspy.js"></script>
-    <script src="/assets/js/bootstrap-tab.js"></script>
-    <script src="/assets/js/bootstrap-tooltip.js"></script>
-    <script src="/assets/js/bootstrap-popover.js"></script>
-    <script src="/assets/js/bootstrap-button.js"></script>
-    <script src="/assets/js/bootstrap-collapse.js"></script>
-    <script src="/assets/js/bootstrap-carousel.js"></script>
-    <script src="/assets/js/bootstrap-typeahead.js"></script>
+    <p>The HTML template is based on <a href="http://twitter.github.com/bootstrap/">Twitter's Bootstrap</a>.</p>
 
-  </body>
+    <div id="debug"></div>
+    <!-- here's where our gameboard goes -->
+    <table id="gameboard" class="table-condensed table-bordered">
+        <tbody>
+
+        </tbody>
+    </table>
+    <button type="button" id="next" onclick='
+        sendCurrentState($("#gameboard"));
+    '>Next
+    </button>
+
+    <!-- eventually this "new game" form will be hidden behind a modal window or a dropdown of some sort -->
+    <form id="new-game" class="well form-inline">
+        <label>Rows</label>
+        <input id="rows" type="text" class="input-small" value="10"/>
+        <label>Columns</label>
+        <input id="cols" type="text" class="input-small" value="10"/>
+        <button type="button" class="btn" onclick='
+            $("#gameboard").children().remove(); // clear out the existing board.
+            createDynamicTable($("#gameboard"), $("#rows").val(), $("#cols").val());
+            $("#gameboard td.tableCell").click(function() {
+                $("#debug").html("Clicked " + $(this).data("col")+"x"+$(this).data("row"));
+                if ($(this).hasClass("alive")) {
+                    $(this).removeClass("alive");
+//                    $(this).html("&nbsp;");
+                } else {
+                    $(this).addClass("alive");
+                }
+            });'>Create board
+        </button>
+    </form>
+
+</div>
+<!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/js/bootstrap-transition.js"></script>
+<script src="/assets/js/bootstrap-alert.js"></script>
+<script src="/assets/js/bootstrap-modal.js"></script>
+<script src="/assets/js/bootstrap-dropdown.js"></script>
+<script src="/assets/js/bootstrap-scrollspy.js"></script>
+<script src="/assets/js/bootstrap-tab.js"></script>
+<script src="/assets/js/bootstrap-tooltip.js"></script>
+<script src="/assets/js/bootstrap-popover.js"></script>
+<script src="/assets/js/bootstrap-button.js"></script>
+<script src="/assets/js/bootstrap-collapse.js"></script>
+<script src="/assets/js/bootstrap-carousel.js"></script>
+<script src="/assets/js/bootstrap-typeahead.js"></script>
+
+<script type="text/javascript">
+    // taken from http://blogs.microsoft.co.il/blogs/linqed/archive/2009/03/04/generating-html-tables-with-jquery.aspx
+    function createDynamicTable(tbody, rows, cols) {
+        if (tbody == null || tbody.length < 1) return;
+        for (var r = 1; r <= rows; r++) {
+            var trow = $("<tr>");
+            for (var c = 1; c <= cols; c++) {
+                $("<td>")
+                        .addClass("tableCell")
+                        .text(" ")
+                        .data("col", c)
+                        .data("row", r)
+                        .appendTo(trow);
+            }
+            trow.appendTo(tbody);
+        }
+    }
+
+    function sendCurrentState(gameboard) {
+        if (gameboard == null || gameboard.length < 1) return; // garbage in, garbage out.
+
+
+    }
+</script>
+
+</body>
 </html>
