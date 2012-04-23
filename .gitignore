@@ -5,3 +5,10 @@ target
 tmp
 .history
 RUNNING_PID
+
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
