@@ -76,7 +76,7 @@ public class App extends Controller {
         if (map == null) {
             return badRequest("Expecting form-url-encoded input data");
         } else {
-            Logger.debug("Got map: " + map);
+            Logger.info("Got map: " + map);
         }
         if (!map.containsKey("rows") || map.get("rows") == null)
             return badRequest("Expecting a 'rows' parameter to indicate the # of rows in the input data");
@@ -85,7 +85,7 @@ public class App extends Controller {
 
         int rows = getRows(map);
         String cells = getCellString(map);
-        Logger.debug("got cells " + cells + " spread among " + rows + " rows");
+        Logger.info("got cells " + cells + " spread among " + rows + " rows");
         try {
             // normally, i'm against arrays instead of ArrayLists; after all, ArrayList gives you expansion for free...
             // but in this case we want the board to be restricted to a certain size, and we can easily predict when it
@@ -93,7 +93,7 @@ public class App extends Controller {
             LifeBoard board = extractBoard(cells, rows);
             LifeBoard newBoard = board.evolve();
             ObjectNode result = formatResponse(newBoard.asArray());
-            Logger.debug("returning "+ result.toString());
+            Logger.info("returning "+ result.toString());
             return ok(result);
         } catch (IllegalArgumentException e) {
             Logger.error("Problem parsing request: ", e);
