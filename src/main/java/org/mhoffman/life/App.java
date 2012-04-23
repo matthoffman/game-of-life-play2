@@ -85,7 +85,7 @@ public class App extends Controller {
 
         int rows = getRows(map);
         String cells = getCellString(map);
-        Logger.info("got cells " + cells + " spread among " + rows + " rows");
+        Logger.debug("got cells " + cells + " spread among " + rows + " rows");
         try {
             // normally, i'm against arrays instead of ArrayLists; after all, ArrayList gives you expansion for free...
             // but in this case we want the board to be restricted to a certain size, and we can easily predict when it
@@ -93,6 +93,7 @@ public class App extends Controller {
             LifeBoard board = extractBoard(cells, rows);
             LifeBoard newBoard = board.evolve();
             ObjectNode result = formatResponse(newBoard.asArray());
+            Logger.debug("returning "+ result.toString());
             return ok(result);
         } catch (IllegalArgumentException e) {
             Logger.error("Problem parsing request: ", e);
@@ -100,18 +101,19 @@ public class App extends Controller {
         }
     }
 
-    private static ObjectNode formatResponse(int[][] newCells) {
-        ObjectNode result = Json.newObject();
-        ArrayNode resultArray = result.arrayNode();
-        for (int i = 0; i < 3; i++) {
+    private static ObjectNode formatResponse(final int[][] newCells) {
+        final ObjectNode result = Json.newObject();
+        final ArrayNode resultArray = result.arrayNode();
+        final int rows = LifeBoard.getRows(newCells);
+        for (int i = 0; i < rows; i++) {
             ArrayNode row = result.arrayNode();
-            for (int j = 0; j < 3; j++) {
-                row.add(0);
+            for (int j = 0; j < LifeBoard.getColumns(newCells); j++) {
+                row.add(newCells[i][j]);
             }
             resultArray.add(row);
         }
         result.put("nextGeneration", resultArray);
-        result.put("rows", 3);
+        result.put("rows", rows);
         return result;
     }
 

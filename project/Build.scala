@@ -17,6 +17,7 @@ object MinimalBuild extends Build {
     libraryDependencies += "com.typesafe" %% "play-mini" % buildVersion,
     libraryDependencies += "com.google.guava" % "guava" % "11.0.1",
     libraryDependencies += "org.scalatest" %% "scalatest" % "1.7.2" % "test",
+    libraryDependencies += "junit" % "junit" % "4.10" % "test",
 
     mainClass in(Compile, run) := Some("play.core.server.NettyServer")
   ).settings(assemblySettings: _*)

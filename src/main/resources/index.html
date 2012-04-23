@@ -172,7 +172,7 @@
                     url:  "/next",
                     data: { "rows": rows, "cells": boardArray},
                     success: function (response) {
-                       $('#debug').html('got back: '+ response.nextGeneration);
+                       $('#debug').html('got back: '+ stringify(response));
                     },
                     dataType: "json"
         });

@@ -3,13 +3,12 @@ package org.mhoffman.life
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 
-
 /**
  *
  *
  */
 
-class LifeBoardTest extends FlatSpec with ShouldMatchers {
+class LifeBoardSpec extends FlatSpec with ShouldMatchers {
   //////////////////////////
   // living cell tests:
   //////////////////////////
@@ -130,4 +129,12 @@ class LifeBoardTest extends FlatSpec with ShouldMatchers {
     val result = lifeBoard.evolveCell(1, Array())
     result should equal(0)
   }
+
+
+  "neighbor extraction" should "work at the top left corner" in {
+      // i don't know how this could possibly happen, but might as well handle it .
+      val lifeBoard = new LifeBoard(Array(Array(0, 0, 0), Array(0, 0, 0), Array(0, 0, 0))) // note that, for this method, we don't care about the passed-in array
+      val result = lifeBoard.evolveCell(1, Array())
+      result should equal(0)
+    }
 }
