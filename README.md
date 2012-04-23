@@ -1,4 +1,3 @@
-========================
 HOW TO USE THIS TEMPLATE
 ========================
 
@@ -11,8 +10,9 @@ HOW TO USE THIS TEMPLATE
 * execute `sbt assembly` to generate a jar distribution 
 
 
+
 A few interesting things about this implementation
-========================
+--------------------------------------------------
 
 
 The main app is written in Java, the tests are written in Scala.
