@@ -130,7 +130,9 @@ public class App extends Controller {
         int[][] array = new int[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                array[i][j] = Character.getNumericValue(cells.charAt(j * (i + 1) + j));
+                int index = i * cols + j; // flatten into a linear index
+                char c = cells.charAt(index);
+                array[i][j] = Character.getNumericValue(c);
             }
         }
         return new LifeBoard(array);

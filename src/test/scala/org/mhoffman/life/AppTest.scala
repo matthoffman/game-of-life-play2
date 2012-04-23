@@ -39,6 +39,18 @@ class AppSpec extends FlatSpec with ShouldMatchers {
     }
   }
 
+  "ExtractBoard" should "handle a 2-row string" in {
+    val board = App.extractBoard("1001", 2)
+    val expected = Array(Array(1, 0), Array(0, 1))
+    board.asArray() should equal(expected)
+  }
+
+  "ExtractBoard" should "handle a 3-row string" in {
+    val board = App.extractBoard("110100", 3)
+    val expected = Array(Array(1, 1), Array(0, 1), Array(0, 0))
+    board.asArray() should equal(expected)
+  }
+
 
 
   //
