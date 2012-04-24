@@ -59,12 +59,12 @@
     <h1>Playing with Life</h1>
 
     <p>This is a simple (really, really simple) implementation of <a
-            href="http://en.wikipedia.org/wiki/Conway's_Game_of_Life">Conway's Game of Life</a> using the <a
-            href="https://github.com/typesafehub/play2-mini">Play2 "mini" framework</a>.</p>
+            href="http://en.wikipedia.org/wiki/Conway's_Game_of_Life">Conway's Game of Life</a> using the
+        <a href="https://github.com/typesafehub/play2-mini">Play2 "mini" framework</a>.</p>
 
     <p>The HTML template is based on <a href="http://twitter.github.com/bootstrap/">Twitter's Bootstrap</a>.</p>
 
-    <div id="debug"></div>
+    <div id="debug" class="hidden"></div>
     <!-- here's where our gameboard goes -->
     <table id="gameboard" class="table-condensed table-bordered">
         <tbody>
@@ -157,47 +157,44 @@
         // changed my mind. More efficient, and simpler with JQuery, to send the request as url-form-encoded, not json.
         // so, to do this, we'll send the # of rows, then a big long string of all the values.
         // That's fairly easy to decode on the other side.
-        var boardArray = $('#gameboard').find(".tableCell").map(function (index, value) {
-                if ($(value).hasClass("alive")) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }).toArray().join("");
+        var boardArray = $('#gameboard').find(".tableCell").map(
+                function (index, value) {
+                    if ($(value).hasClass("alive")) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }).toArray().join("");
         var rows = $('#gameboard').find("tr").size()
 
+        var resp;
         $('#debug').html("sending " + boardArray);
-        $.ajax(  {
-                    type: "POST",
-                    url:  "/next",
-                    data: { "rows": rows, "cells": boardArray},
-                    success: function (response) {
-                       $('#debug').html('got back: '+ stringify(response));
-                    },
-                    dataType: "json"
+        $.ajax({
+            type:"POST",
+            url:"/next",
+            data:{ "rows":rows, "cells":boardArray},
+            success:function (response) {
+                $('#debug').html('got back: ' + response);
+                resp = response;
+                var cells = $('#gameboard').find(".tableCell")
+                response.nextGeneration.forEach(function (row, rowIndex) {
+                            $('#debug').append(" i:" + rowIndex + " v:" + row)
+                            // go through each row, then through each column, and update our table accordingly
+                            row.forEach(function (col, colIndex) {
+                                        var index = rowIndex * response.columns + colIndex;
+                                        if (col == "0") {
+                                            $(cells.get(index)).removeClass("alive");
+                                        } else {
+                                            $(cells.get(index)).addClass("alive");
+                                        }
+                                    }
+                            );
+                        }
+                );
+
+            },
+            dataType:"json"
         });
-//        $.ajax( {
-//            type: "POST",
-//            url:  "/next",
-//            data: dataToSend,
-//            success: function (response) {
-//                $('#debug').html(response); // hey, it's a start, right?
-//            },
-//            dataType: "json",
-//            traditional: true
-//        });
-//        // if we want to post JSON data, we do it like this:
-//        $.ajax( {
-//            type: "POST",
-//            url:  "/next",
-//            data: '{ "some": "data" }',
-//            success: function (response) {
-//                $('#debug').html(response); // hey, it's a start, right?
-//            },
-//            dataType: "json",
-//            contentType: "application/json",
-//            processData: false
-//        });
     }
 </script>
 

@@ -114,6 +114,7 @@ public class App extends Controller {
         }
         result.put("nextGeneration", resultArray);
         result.put("rows", rows);
+        result.put("columns", LifeBoard.getColumns(newCells));
         return result;
     }
 
