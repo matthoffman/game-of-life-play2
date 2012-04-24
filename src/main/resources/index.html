@@ -66,13 +66,13 @@
 
     <div id="debug" class="hidden"></div>
     <!-- here's where our gameboard goes -->
-    <table id="gameboard" class="table-condensed table-bordered">
+    <table id="gameboard" class="table-condensed table-bordered gameboard">
         <tbody>
 
         </tbody>
     </table>
     <button type="button" id="next" onclick='
-        sendCurrentState($("#gameboard"));
+        updateCurrentState($("#gameboard"));
     '>Next
     </button>
 
@@ -137,7 +137,7 @@
         }
     }
 
-    function sendCurrentState(gameboard) {
+    function updateCurrentState(gameboard) {
         if (gameboard == null || gameboard.length < 1) return; // garbage in, garbage out.
         // create a 2d array where cells marked "alive" = 1 and other cells = 0.
         // we'll do this with two nested map calls, because it seems simplest.

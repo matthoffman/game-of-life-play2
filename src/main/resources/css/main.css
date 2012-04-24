@@ -3,4 +3,9 @@
     background: #00dd0b;
 }
 
+.gameboard th, .gameboard td {
+    border-left: 1px solid #DDDDDD;
+    border-bottom: 1px solid #DDDDDD;
+    padding: 13px 16px;
+}
 
